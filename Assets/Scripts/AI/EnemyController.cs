@@ -9,6 +9,7 @@ namespace AI
         public GridManager Grid;
         public float MoveSpeed = 2f;
         public float StoppingDistance = 0.2f;
+        public float PursueRange = 8f;
 
         private Blackboard _bb;
         private int _currentPathIndex = 0;
@@ -21,14 +22,15 @@ namespace AI
 
         private void Update()
         {
-            // decision
-            var decision = AI.DecisionTree.DecisionTree.Decide(_bb);
-            if (decision == AI.DecisionTree.DecisionResult.Pursue && _bb.Player != null)
+            bool shouldPursue = _bb.Player != null &&
+                                Vector3.Distance(transform.position, _bb.Player.transform.position) < PursueRange;
+
+            if (shouldPursue)
             {
                 _bb.TargetPosition = _bb.Player.transform.position;
                 _bb.CurrentPath = AStarPathfinder.FindPath(Grid, transform.position, _bb.TargetPosition);
             }
-            else if (decision == AI.DecisionTree.DecisionResult.Patrol)
+            else
             {
                 if (_bb.CurrentPath == null || _bb.CurrentPath.Count == 0)
                 {

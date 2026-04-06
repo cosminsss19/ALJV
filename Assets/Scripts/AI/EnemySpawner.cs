@@ -21,8 +21,6 @@ namespace AI
                 var ec = go.GetComponent<EnemyController>();
                 if (ec == null) ec = go.AddComponent<EnemyController>();
                 ec.Grid = Grid;
-                var comm = FindObjectOfType<EnemyCommunicationManager>();
-                if (comm != null) comm.RegisterEnemy(ec);
             }
         }
     }
