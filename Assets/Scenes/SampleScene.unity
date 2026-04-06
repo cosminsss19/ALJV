@@ -575,7 +575,7 @@ MonoBehaviour:
   EnemyPrefabs:
   - {fileID: 6766536238432138802, guid: 29275473dc42c1a499187925872e54cb, type: 3}
   EnemyCount: 50
-  EnemySpawnY: 1
+  EnemySpawnY: 0
   AutoSpawnOnPlay: 1
 --- !u!4 &1113251016
 Transform:
