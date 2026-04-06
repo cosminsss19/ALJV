@@ -9,7 +9,6 @@ namespace AI
         public Vector3 WorldPosition;
         public bool Walkable = true;
 
-        // A* fields
         public int G;
         public int H;
         public Node Parent;

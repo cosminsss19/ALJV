@@ -34,7 +34,6 @@ namespace AI
             {
                 if (_bb.CurrentPath == null || _bb.CurrentPath.Count == 0)
                 {
-                    // pick random point on grid
                     if (Grid != null)
                     {
                         int rx = Random.Range(0, Grid.Width);
@@ -46,14 +45,12 @@ namespace AI
                 }
             }
 
-            // follow path
             if (_bb.CurrentPath != null && _bb.CurrentPath.Count > 0)
             {
                 FollowPath(_bb.CurrentPath, StoppingDistance, Time.deltaTime);
             }
         }
 
-        // returns true if still moving
         public bool FollowPath(List<Vector3> path, float acceptRadius, float deltaTime)
         {
             if (path == null || path.Count == 0) return false;
@@ -68,7 +65,6 @@ namespace AI
                 _currentPathIndex++;
                 if (_currentPathIndex >= path.Count)
                 {
-                    // reached final
                     path.Clear();
                     _currentPathIndex = 0;
                     return false;

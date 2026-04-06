@@ -18,7 +18,7 @@ namespace AI
         [Header("Enemies")]
         public List<GameObject> EnemyPrefabs = new List<GameObject>();
         public int EnemyCount = 5;
-        public float EnemySpawnY = 1f;
+        public float EnemySpawnY = 0f;
 
         [Header("Runtime")]
         public bool AutoSpawnOnPlay = true;
@@ -42,7 +42,6 @@ namespace AI
             int gridHeight = Mathf.Max(1, Height);
             float cellSize = Mathf.Max(0.01f, CellSize);
 
-            // Clamp inspector values to safe runtime values.
             Width = gridWidth;
             Height = gridHeight;
             CellSize = cellSize;

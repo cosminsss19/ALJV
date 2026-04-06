@@ -47,7 +47,6 @@ namespace AI
 
         private static int Heuristic(Node a, Node b)
         {
-            // Manhattan distance
             return Mathf.Abs(a.X - b.X) + Mathf.Abs(a.Y - b.Y);
         }
 
