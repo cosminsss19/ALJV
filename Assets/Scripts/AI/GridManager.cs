@@ -197,6 +197,16 @@ namespace AI
             return result;
         }
 
+        public Node GetRandomWalkableNode()
+        {
+            if (_grid == null) BuildGrid();
+
+            var walkableNodes = GetWalkableNodesInArea(0, 0, Width - 1, Height - 1);
+            if (walkableNodes == null || walkableNodes.Count == 0) return null;
+
+            return walkableNodes[Random.Range(0, walkableNodes.Count)];
+        }
+
         private void OnDrawGizmosSelected()
         {
             if (_grid == null) return;
