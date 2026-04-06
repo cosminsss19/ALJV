@@ -48,6 +48,8 @@ namespace StarterAssets
 		public LayerMask GroundLayers;
 
 		[Header("Cinemachine")]
+		[Tooltip("Enable Starter Assets camera target rotation. Disable this when using your own camera setup.")]
+		public bool EnableStarterCameraControl = false;
 		[Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
 		public GameObject CinemachineCameraTarget;
 		[Tooltip("How far in degrees can you move the camera up")]
@@ -124,7 +126,10 @@ namespace StarterAssets
 
 		private void LateUpdate()
 		{
-			CameraRotation();
+			if (EnableStarterCameraControl)
+			{
+				CameraRotation();
+			}
 		}
 
 		private void AssignAnimationIDs()
@@ -151,6 +156,8 @@ namespace StarterAssets
 
 		private void CameraRotation()
 		{
+			if (CinemachineCameraTarget == null) return;
+
 			// if there is an input and camera position is not fixed
 			if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
 			{
