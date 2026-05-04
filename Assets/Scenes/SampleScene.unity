@@ -583,6 +583,76 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &810477624
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 810477626}
+  - component: {fileID: 810477625}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &810477625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 810477624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aeae97047693a524c90158a6ec18cb29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  TargetCoins: 5
+  CoinCountText: {fileID: 0}
+  EndScreenPanel: {fileID: 0}
+  EndScreenText: {fileID: 0}
+  RestartButton: {fileID: 0}
+  BackgroundMusic: {fileID: 8300000, guid: 19b5f924a2c7e0440b0c01123afa01bf, type: 3}
+  BackgroundMusicVolume: 0.04
+--- !u!4 &810477626
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 810477624}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 29.91266, y: 0, z: 41.26666}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &827605803 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 463236617251174108, guid: 76b9d8179905d454e9bf6dcc847231ce, type: 3}
+  m_PrefabInstance: {fileID: 1367387255}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &827605804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827605803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5149863739893ca4a9f05adb883687c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCollisionHandler
+  CaughtSfx: {fileID: 8300000, guid: 033cc7cc347ebed488b2f27795bdb70b, type: 3}
+  CaughtSfxVolume: 5
 --- !u!1 &1113251013
 GameObject:
   m_ObjectHideFlags: 0
@@ -625,6 +695,9 @@ MonoBehaviour:
   - {fileID: 6766536238432138802, guid: 29275473dc42c1a499187925872e54cb, type: 3}
   EnemyCount: 50
   EnemySpawnY: 0
+  CoinPrefab: {fileID: 2593500573908973897, guid: 1c023298cedd7cd4da5bca7abf49d553, type: 3}
+  CoinCount: 10
+  MinCoinDistanceInCells: 4
   AutoSpawnOnPlay: 1
 --- !u!4 &1113251016
 Transform:
@@ -704,7 +777,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 463236617251174108, guid: 76b9d8179905d454e9bf6dcc847231ce, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 827605804}
   m_SourcePrefab: {fileID: 100100000, guid: 76b9d8179905d454e9bf6dcc847231ce, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -716,3 +792,4 @@ SceneRoots:
   - {fileID: 1367387255}
   - {fileID: 626913662}
   - {fileID: 361137185}
+  - {fileID: 810477626}

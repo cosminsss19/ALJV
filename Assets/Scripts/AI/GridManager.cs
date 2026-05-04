@@ -22,6 +22,11 @@ namespace AI
         public int EnemyCount = 5;
         public float EnemySpawnY = 0f;
 
+        [Header("Coins")]
+        public GameObject CoinPrefab;
+        public int CoinCount = 10;
+        public float MinCoinDistanceInCells = 1.5f;
+
         [Header("Runtime")]
         public bool AutoSpawnOnPlay = true;
 
@@ -88,6 +93,7 @@ namespace AI
 
             SpawnObstacles(freeNodes);
             SpawnEnemies(freeNodes);
+            SpawnCoins();
         }
 
         private void SpawnObstacles(List<Node> freeNodes)
@@ -149,6 +155,111 @@ namespace AI
             }
         }
 
+        private void SpawnCoins()
+        {
+            if (CoinPrefab == null) return;
+
+            var freeNodes = GetWalkableNodesInArea(0, 0, Width - 1, Height - 1);
+            RemoveNodesOccupiedByExistingEnemies(freeNodes);
+            RemoveNodesOccupiedByPlayer(freeNodes);
+
+            int count = Mathf.Max(0, CoinCount);
+            int safety = Mathf.Max(100, count * 10);
+            float minDist = Mathf.Max(0f, MinCoinDistanceInCells) * CellSize;
+
+            var placedPositions = new List<Vector3>();
+            while (count > 0 && freeNodes.Count > 0 && safety-- > 0)
+            {
+                int index = Random.Range(0, freeNodes.Count);
+                var node = freeNodes[index];
+                freeNodes.RemoveAt(index);
+
+                Vector3 pos = new Vector3(node.WorldPosition.x, 1f, node.WorldPosition.z);
+                if (minDist > 0f)
+                {
+                    bool tooClose = false;
+                    for (int i = 0; i < placedPositions.Count; i++)
+                    {
+                        if (Vector3.Distance(pos, placedPositions[i]) < minDist)
+                        {
+                            tooClose = true;
+                            break;
+                        }
+                    }
+                    if (tooClose) continue;
+                }
+
+                var coin = Instantiate(CoinPrefab, pos, Quaternion.Euler(90f, 0f, 0f));
+                EnsureCoinPickup(coin);
+                IgnoreCoinEnemyCollisions(coin);
+                placedPositions.Add(pos);
+                count--;
+            }
+        }
+
+        private void EnsureCoinPickup(GameObject coin)
+        {
+            if (coin == null) return;
+
+            var pickup = coin.GetComponentInChildren<CoinPickup>(true);
+            if (pickup == null)
+            {
+                pickup = coin.AddComponent<CoinPickup>();
+            }
+
+            var collider = coin.GetComponentInChildren<Collider>();
+            if (collider == null)
+            {
+                collider = coin.AddComponent<SphereCollider>();
+            }
+            collider.isTrigger = true;
+
+            var rb = coin.GetComponent<Rigidbody>();
+            if (rb == null)
+            {
+                rb = coin.AddComponent<Rigidbody>();
+            }
+            rb.isKinematic = true;
+            rb.useGravity = false;
+        }
+
+        private void IgnoreCoinEnemyCollisions(GameObject coin)
+        {
+            if (coin == null) return;
+
+            var coinColliders = coin.GetComponentsInChildren<Collider>(true);
+            var coinColliders2D = coin.GetComponentsInChildren<Collider2D>(true);
+            if ((coinColliders == null || coinColliders.Length == 0) && (coinColliders2D == null || coinColliders2D.Length == 0)) return;
+
+            var enemies = FindObjectsOfType<EnemyController>();
+            foreach (var enemy in enemies)
+            {
+                if (enemy == null) continue;
+
+                var enemyColliders = enemy.GetComponentsInChildren<Collider>(true);
+                foreach (var enemyCol in enemyColliders)
+                {
+                    if (enemyCol == null) continue;
+                    foreach (var coinCol in coinColliders)
+                    {
+                        if (coinCol == null) continue;
+                        Physics.IgnoreCollision(coinCol, enemyCol, true);
+                    }
+                }
+
+                var enemyColliders2D = enemy.GetComponentsInChildren<Collider2D>(true);
+                foreach (var enemyCol2D in enemyColliders2D)
+                {
+                    if (enemyCol2D == null) continue;
+                    foreach (var coinCol2D in coinColliders2D)
+                    {
+                        if (coinCol2D == null) continue;
+                        Physics2D.IgnoreCollision(coinCol2D, enemyCol2D, true);
+                    }
+                }
+            }
+        }
+
         private GameObject GetRandomPrefab(List<GameObject> prefabs)
         {
             if (prefabs == null || prefabs.Count == 0) return null;
@@ -181,6 +292,19 @@ namespace AI
 
             if (occupied.Count == 0) return;
             freeNodes.RemoveAll(n => occupied.Contains(n));
+        }
+
+        private void RemoveNodesOccupiedByPlayer(List<Node> freeNodes)
+        {
+            if (freeNodes == null || freeNodes.Count == 0) return;
+
+            var player = GameObject.FindGameObjectWithTag("Player");
+            if (player == null) return;
+
+            var node = GetNodeFromWorldPosition(player.transform.position);
+            if (node == null) return;
+
+            freeNodes.RemoveAll(n => n == node);
         }
 
         public IEnumerable<Node> GetNeighbors(Node node)
