@@ -19,10 +19,14 @@ namespace AI
         [Header("Debug")]
         public bool LogStateChanges = false;
 
+        [Header("Detection Sound")]
+        public float HearingFreshnessWindow = 0.2f;
+
         private Blackboard _bb;
         private Vector3 _lastPlayerPos;
         private bool _hasLastPlayerPos;
         private bool _lastSeen;
+        private bool _wasHearing;
 
         private void Awake()
         {
@@ -53,11 +57,23 @@ namespace AI
 
             CheckHearingFromMovement();
 
+            if (sees && !_lastSeen)
+            {
+                SoundManager.Instance.PlaySpotted();
+            }
+
+            bool isHearing = (Time.time - _bb.LastHeardTime) <= HearingFreshnessWindow;
+            if (isHearing && !_wasHearing)
+            {
+                SoundManager.Instance.PlayHeard();
+            }
+            _wasHearing = isHearing;
+
             if (LogStateChanges && sees != _lastSeen)
             {
                 Debug.Log($"{name} sight={(sees ? "VISIBLE" : "lost")} dist={(_bb.Player != null ? Vector3.Distance(transform.position, _bb.Player.transform.position).ToString("F2") : "n/a")}");
-                _lastSeen = sees;
             }
+            _lastSeen = sees;
         }
 
         private bool ComputeCanSee()
