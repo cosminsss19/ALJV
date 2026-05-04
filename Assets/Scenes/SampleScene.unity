@@ -289,7 +289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollowPositionOnly
   target: {fileID: 512756422}
-  offset: {x: 0, y: 8.7, z: 0}
+  offset: {x: 0, y: 12, z: 0}
   fixedEuler: {x: 79.19, y: 0, z: 0}
 --- !u!1 &361137183
 GameObject:
@@ -619,6 +619,8 @@ MonoBehaviour:
   - {fileID: 683523534501577758, guid: ccf15eb8f9751294a8fb35911ed96342, type: 3}
   ObstacleCount: 900
   ObstacleSpawnY: 0
+  MinWallLength: 3
+  MaxWallLength: 8
   EnemyPrefabs:
   - {fileID: 6766536238432138802, guid: 29275473dc42c1a499187925872e54cb, type: 3}
   EnemyCount: 50

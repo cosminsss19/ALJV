@@ -14,6 +14,8 @@ namespace AI
         public List<GameObject> ObstaclePrefabs = new List<GameObject>();
         public int ObstacleCount = 10;
         public float ObstacleSpawnY = 0f;
+        public int MinWallLength = 3;
+        public int MaxWallLength = 8;
 
         [Header("Enemies")]
         public List<GameObject> EnemyPrefabs = new List<GameObject>();
@@ -90,19 +92,39 @@ namespace AI
 
         private void SpawnObstacles(List<Node> freeNodes)
         {
-            int count = Mathf.Max(0, ObstacleCount);
-            for (int i = 0; i < count; i++)
+            int budget = Mathf.Max(0, ObstacleCount);
+            int safety = Mathf.Max(100, budget * 8);
+
+            int minLen = Mathf.Max(1, MinWallLength);
+            int maxLen = Mathf.Max(minLen, MaxWallLength);
+
+            while (budget > 0 && freeNodes.Count > 0 && safety-- > 0)
             {
-                if (freeNodes.Count == 0) return;
                 var prefab = GetRandomPrefab(ObstaclePrefabs);
                 if (prefab == null) return;
 
-                int index = Random.Range(0, freeNodes.Count);
-                var node = freeNodes[index];
-                freeNodes.RemoveAt(index);
+                int startIdx = Random.Range(0, freeNodes.Count);
+                var startNode = freeNodes[startIdx];
+                freeNodes.RemoveAt(startIdx);
 
-                var go = Instantiate(prefab, node.WorldPosition + Vector3.up * ObstacleSpawnY, Quaternion.identity);
-                node.Walkable = false;
+                if (!startNode.Walkable) continue;
+
+                int wallLength = Random.Range(minLen, maxLen + 1);
+                bool horizontal = Random.value < 0.5f;
+                int stepX = horizontal ? 1 : 0;
+                int stepY = horizontal ? 0 : 1;
+
+                for (int i = 0; i < wallLength && budget > 0; i++)
+                {
+                    int x = startNode.X + stepX * i;
+                    int y = startNode.Y + stepY * i;
+                    var node = GetNode(x, y);
+                    if (node == null || !node.Walkable) break;
+
+                    Instantiate(prefab, node.WorldPosition + Vector3.up * ObstacleSpawnY, Quaternion.identity);
+                    node.Walkable = false;
+                    budget--;
+                }
             }
         }
 
