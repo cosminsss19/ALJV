@@ -23,6 +23,9 @@ namespace AI
         public float LookAroundDuration = 2f;
         public float LookAroundSpeed = 60f;
 
+        [Header("Animation")]
+        public float SpeedDampTime = 0.1f;
+
         private Blackboard _bb;
         private int _currentPathIndex = 0;
         private float _nextRepathTime = 0f;
@@ -32,12 +35,56 @@ namespace AI
         private Vector3 _lastInvestigateTarget;
         private float _lookAroundEndTime = -1f;
 
+        private Animator _animator;
+        private int _animSpeedHash;
+        private int _animMotionSpeedHash;
+        private int _animGroundedHash;
+        private bool _hasSpeedParam;
+        private bool _hasMotionSpeedParam;
+        private bool _hasGroundedParam;
+        private Vector3 _lastFramePos;
+
         private void Awake()
         {
             _bb = GetComponent<Blackboard>();
             if (_bb == null) _bb = gameObject.AddComponent<Blackboard>();
             if (GetComponent<Perception>() == null) gameObject.AddComponent<Perception>();
             BuildBehaviorTree();
+            CacheAnimator();
+        }
+
+        private void CacheAnimator()
+        {
+            _animator = GetComponent<Animator>();
+            if (_animator == null) return;
+
+            _animSpeedHash = Animator.StringToHash("Speed");
+            _animMotionSpeedHash = Animator.StringToHash("MotionSpeed");
+            _animGroundedHash = Animator.StringToHash("Grounded");
+
+            foreach (var p in _animator.parameters)
+            {
+                if (p.nameHash == _animSpeedHash) _hasSpeedParam = true;
+                else if (p.nameHash == _animMotionSpeedHash) _hasMotionSpeedParam = true;
+                else if (p.nameHash == _animGroundedHash) _hasGroundedParam = true;
+            }
+
+            _lastFramePos = transform.position;
+        }
+
+        private void LateUpdate()
+        {
+            if (_animator == null) return;
+
+            float dt = Time.deltaTime;
+            Vector3 delta = transform.position - _lastFramePos;
+            delta.y = 0f;
+            float speed = dt > 0.0001f ? delta.magnitude / dt : 0f;
+            _lastFramePos = transform.position;
+
+            if (_hasSpeedParam) _animator.SetFloat(_animSpeedHash, speed, SpeedDampTime, dt);
+            if (_hasMotionSpeedParam) _animator.SetFloat(_animMotionSpeedHash, 1f);
+            if (_hasGroundedParam) _animator.SetBool(_animGroundedHash, true);
         }
 
         private void Update()
